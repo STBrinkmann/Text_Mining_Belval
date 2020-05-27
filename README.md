@@ -1,7 +1,7 @@
 # Text Mining Belval Campus
 In 2001 a project has been created to transform the former steel production site in Belval,
 Luxembourg into the [Cité des Sciences](https://wwwde.uni.lu/fhse/belval_campus). 
-In [2015](https://lequotidien.lu/luxembourg/le-campus-de-belval-en-un-clin-doeil/) the new campus has been opend.
+In [2015](https://lequotidien.lu/luxembourg/le-campus-de-belval-en-un-clin-doeil/) the new campus has been opened.
 ![Campus Belval](https://wwwde.uni.lu/var/storage/images/media/images/campus_belval_final_1/1014043-1-fre-FR/campus_belval_final_1.jpg)
 
 In this analysis I want to explore how this topic is being represented in the news.
