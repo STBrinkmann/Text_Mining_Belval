@@ -111,7 +111,7 @@ belval_corpus_count <- tidy_belval_corpus %>%
 
 # Plot Wordcloud with counts of words  
 wordcloud(words = belval_corpus_count$word, freq = belval_corpus_count$n, min.freq = 1,
-          max.words=200, random.order=F, rot.per=0.35, scale=c(3.5,0.25),
+          max.words=200, random.order=F, rot.per=0.3, scale=c(3.5,0.25),
           colors=brewer.pal(6, "Dark2"))
 
 
@@ -144,7 +144,7 @@ tidy_belval_corpus %>%
   count(year, title, word, sort = TRUE) %>%
   bind_tf_idf(word, title, n) %>% 
   group_by(year) %>% 
-  top_n(15) %>% 
+  top_n(10) %>% 
   ungroup() %>% 
   mutate(word = reorder(word, tf_idf)) %>%
   ggplot(aes(word, y=tf_idf, fill = year)) +
