@@ -7,7 +7,7 @@
 # Date:   27.05.2020
 #
 #
-# Note: In this script I performed a simple Corpus Analysis of 58 news articles about the Belval Campus, Luxembourg.
+# Note: In this script I performed a simple Corpus Analysis of 66 news articles about the Belval Campus, Luxembourg.
 #       Make sure, that you have the same document structure, if you use a different corpus (see GitHub readme)!
 
 #### Data Wrangling ####
@@ -100,10 +100,10 @@ tidy_belval_corpus[tidy_belval_corpus$year == 2014,5] <- 2015
 
 #### Wordcloud ####
 # Load packages
-library("tm")
-library("SnowballC")
-library("wordcloud")
-library("RColorBrewer")
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(RColorBrewer)
 
 # Count of each word accros the total corpus
 belval_corpus_count <- tidy_belval_corpus %>% 
@@ -139,7 +139,7 @@ tidy_belval_corpus %>%
 
 
 # Plot TF/IDF for each year. 
-# I used the word counts of the complete corpus (all 58 articles) and calculated the tf_idf on the level of each article.
+# I used the word counts of the complete corpus (all 66 articles) and calculated the tf_idf on the level of each article.
 tidy_belval_corpus %>% 
   count(year, title, word, sort = TRUE) %>%
   bind_tf_idf(word, title, n) %>% 
@@ -154,3 +154,75 @@ tidy_belval_corpus %>%
   coord_flip() +
   theme_bw() +
   theme(axis.title.y = element_blank())
+
+
+#### Topic Modelin ####
+library(stm)
+library(quanteda)
+
+set.seed(1994)
+
+# Implement Document Term/Feature Matrix
+belval_dfm <- tidy_belval_corpus %>% 
+  count(title, word, sort = TRUE) %>% 
+  cast_dfm(title, word, n)
+
+# Train Structural Topic Model (STM)
+topic_model <- stm(belval_dfm, K=6, init.type = "Spectral")
+#summary(topic_model)
+
+# Tidy STM
+td_beta <- tidy(topic_model) %>% 
+  mutate(topic = replace(topic, topic == 1, "Industry")) %>% 
+  mutate(topic = replace(topic, topic == 2, "Gastronomy")) %>% 
+  mutate(topic = replace(topic, topic == 3, "Culture/Future")) %>% 
+  mutate(topic = replace(topic, topic == 4, "University/Students")) %>% 
+  mutate(topic = replace(topic, topic == 5, "Project Development")) %>% 
+  mutate(topic = replace(topic, topic == 6, "Events"))
+  
+# Plot result of STM
+td_beta %>% 
+  group_by(topic) %>% 
+  top_n(10) %>% 
+  ungroup() %>% 
+  mutate(term = reorder(term, topic)) %>%
+  ggplot(aes(term, y=beta, fill = topic)) +
+  geom_col(show.legend = FALSE) +
+  labs(y = "Beta") +
+  facet_wrap(~topic, scales = "free") +
+  coord_flip() +
+  theme_bw() +
+  theme(axis.title.y = element_blank())
+
+# Convert results from topic model to gamma values
+td_gamma <- tidy(topic_model, matrix = "gamma",
+                 document_names = rownames(belval_dfm)) %>% 
+  mutate(topic = replace(topic, topic == 1, "Industry")) %>% 
+  mutate(topic = replace(topic, topic == 2, "Gastronomy")) %>% 
+  mutate(topic = replace(topic, topic == 3, "Culture/Future")) %>% 
+  mutate(topic = replace(topic, topic == 4, "University/Students")) %>% 
+  mutate(topic = replace(topic, topic == 5, "Project Development")) %>% 
+  mutate(topic = replace(topic, topic == 6, "Events"))
+
+# Plot Gamma
+ggplot(td_gamma, aes(gamma, fill = as.factor(topic))) + 
+  geom_histogram(show.legend = FALSE) +
+  facet_wrap(~topic, ncol = 3) +
+  theme_bw() +
+  labs(x = "Gamma") +
+  theme(axis.title.y = element_blank())
+
+# Final Plot: Change over time
+td_gamma[td_gamma$gamma > 0.5, ] %>% 
+  rename(title = document) %>%
+  inner_join(unique(select(tidy_belval_corpus, title, year)), ., by = "title") %>% 
+  mutate(topic = as.factor(topic)) %>% 
+  count(year, topic, sort = TRUE) %>% 
+  mutate(topic = reorder(topic, n, sum)) %>%
+  ggplot(aes(x = year, y=n, fill = topic)) +
+  geom_col() + 
+  scale_x_continuous(breaks = seq(2015, 2020, 1)) +
+  labs(y = "Frequency",
+       fill='Topics') +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
