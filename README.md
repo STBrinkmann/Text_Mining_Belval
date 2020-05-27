@@ -30,7 +30,7 @@ but also the acknowledgement of its history ("furnace", "steel", "industrial"...
 
 ### Analysing change over time
 At this point the corpus does not contain many articles for 2014 and 2015. 
-Therefore these articles have been combined for the further analysis. The next figure the number of articles per year:
+Therefore these articles have been combined for the further analysis. The next figure shows the number of articles per year:
 ![Article count](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/Articles_Count.svg)
 
 With the wordcloud we explored the word frequency of the whole corpus. To analyse the keywords of each year, I conducted
