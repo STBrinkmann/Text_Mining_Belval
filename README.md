@@ -28,15 +28,20 @@ Next a Wordcloud with the word frequency of the whole corpus has been created:
 We can already see that the new campus is of high importance. But also, the look into the future ("2022", "future"),
 but also the acknowledgement of its history ("furnace", "steel", "industrial"...) are often thematised.
 
-### Analysing change over time
+### Term Frequency-Inverse Document Frequency
 At this point the corpus does not contain many articles for 2014 and 2015. 
 Therefore these articles have been combined for the further analysis. The next figure shows the number of articles per year:
 ![Article count](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/Articles_Count.svg)
 
-With the wordcloud we explored the word frequency of the whole corpus. To analyse the keywords of each year, I conducted
-a [term frequency-inverse document frequency](http://www.tfidf.com/):
+With the wordcloud we explored the word frequency of the whole corpus. To analyse the keywords of each year, a [term frequency-inverse document frequency](http://www.tfidf.com/) has been conducted: 
 ![TF/IDF](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/tf_idf.svg)
 
-TODO: Interpretation
+### Structural Topic Model
+Next a Structural Topic Model (STM) has been applied on the data set with K = 6. These 6 topics have been labeled manually.
+![STM](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/stm.svg)
+
+
+
+
 
 
