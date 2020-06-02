@@ -90,7 +90,7 @@ belval_corpus[belval_corpus$word=="furnaces",4] <- "furnace"
 # Tidy the data
 tidy_belval_corpus <- belval_corpus %>%
   # I have removed these words after exploring the data 
-  filter(!(word %in% c("wa", "ha", "bu"))) %>% 
+  filter(!(word %in% c("wa", "ha", "bu", "d"))) %>% 
   mutate(title = factor(title, levels = unique(title))) %>%
   mutate(year = lubridate::year(date))
 
@@ -146,12 +146,15 @@ tidy_belval_corpus %>%
   group_by(year) %>% 
   top_n(10) %>% 
   ungroup() %>% 
-  mutate(word = reorder(word, tf_idf)) %>%
-  ggplot(aes(word, y=tf_idf, fill = year)) +
+  mutate(year = as.factor(year), 
+         word = reorder_within(word, tf_idf, year)) %>%
+  ggplot(aes(x=word, y=tf_idf, fill = year)) +
   geom_col(show.legend = FALSE) +
   labs(y = "Term Frequency - Inverse Document Frequency (TF-IDF)") +
   facet_wrap(~year, scales = "free") +
   coord_flip() +
+  scale_x_reordered() +
+  scale_y_continuous(expand = c(0.01, 0, 0.1, 0)) +
   theme_bw() +
   theme(axis.title.y = element_blank())
 
@@ -173,36 +176,40 @@ topic_model <- stm(belval_dfm, K=6, init.type = "Spectral")
 
 # Tidy STM
 td_beta <- tidy(topic_model) %>% 
-  mutate(topic = replace(topic, topic == 1, "Industry")) %>% 
-  mutate(topic = replace(topic, topic == 2, "Gastronomy")) %>% 
-  mutate(topic = replace(topic, topic == 3, "Culture/Future")) %>% 
-  mutate(topic = replace(topic, topic == 4, "University/Students")) %>% 
-  mutate(topic = replace(topic, topic == 5, "Project Development")) %>% 
-  mutate(topic = replace(topic, topic == 6, "Events"))
+  mutate(topic = replace(topic, topic == 1, "Strukturwandel")) %>% 
+  mutate(topic = replace(topic, topic == 2, "Gastronomie")) %>% 
+  mutate(topic = replace(topic, topic == 3, "Kultur/Zukunft, Esch 2022")) %>% 
+  mutate(topic = replace(topic, topic == 4, "Stadtentwicklung")) %>% 
+  mutate(topic = replace(topic, topic == 5, "Events")) %>% 
+  mutate(topic = replace(topic, topic == 6, "Campus Belval"))
   
 # Plot result of STM
 td_beta %>% 
   group_by(topic) %>% 
   top_n(10) %>% 
   ungroup() %>% 
-  mutate(term = reorder(term, topic)) %>%
-  ggplot(aes(term, y=beta, fill = topic)) +
+  mutate(topic = as.factor(topic),
+         term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = topic)) +
   geom_col(show.legend = FALSE) +
-  labs(y = "Beta") +
-  facet_wrap(~topic, scales = "free") +
+  facet_wrap(~topic, scales = "free_y") +
   coord_flip() +
+  scale_x_reordered() +
+  scale_y_continuous(expand = c(0.01, 0, 0.1, 0)) +
+  labs(y = "Beta") +
   theme_bw() +
-  theme(axis.title.y = element_blank())
+  theme(axis.title.y = element_blank(),
+        axis.ticks.y = element_blank())
 
 # Convert results from topic model to gamma values
 td_gamma <- tidy(topic_model, matrix = "gamma",
                  document_names = rownames(belval_dfm)) %>% 
-  mutate(topic = replace(topic, topic == 1, "Industry")) %>% 
-  mutate(topic = replace(topic, topic == 2, "Gastronomy")) %>% 
-  mutate(topic = replace(topic, topic == 3, "Culture/Future")) %>% 
-  mutate(topic = replace(topic, topic == 4, "University/Students")) %>% 
-  mutate(topic = replace(topic, topic == 5, "Project Development")) %>% 
-  mutate(topic = replace(topic, topic == 6, "Events"))
+  mutate(topic = replace(topic, topic == 1, "Strukturwandel")) %>% 
+  mutate(topic = replace(topic, topic == 2, "Gastronomie")) %>% 
+  mutate(topic = replace(topic, topic == 3, "Kultur/Zukunft, Esch 2022")) %>% 
+  mutate(topic = replace(topic, topic == 4, "Stadtentwicklung")) %>% 
+  mutate(topic = replace(topic, topic == 5, "Events")) %>% 
+  mutate(topic = replace(topic, topic == 6, "Campus Belval"))
 
 # Plot Gamma
 ggplot(td_gamma, aes(gamma, fill = as.factor(topic))) + 
@@ -216,13 +223,19 @@ ggplot(td_gamma, aes(gamma, fill = as.factor(topic))) +
 td_gamma[td_gamma$gamma > 0.5, ] %>% 
   rename(title = document) %>%
   inner_join(unique(select(tidy_belval_corpus, title, year)), ., by = "title") %>% 
-  mutate(topic = as.factor(topic)) %>% 
   count(year, topic, sort = TRUE) %>% 
   mutate(topic = reorder(topic, n, sum)) %>%
   ggplot(aes(x = year, y=n, fill = topic)) +
   geom_col() + 
+  scale_y_continuous(expand = c(0,0,0.02,0)) +
   scale_x_continuous(breaks = seq(2015, 2020, 1)) +
-  labs(y = "Frequency",
-       fill='Topics') +
+  labs(y = "Anzahl der Artikel",
+       fill='Topic') +
   theme_bw() +
   theme(axis.title.x = element_blank())
+
+td_gamma[td_gamma$gamma > 0.5, ] %>% 
+  rename(title = document) %>%
+  inner_join(unique(select(tidy_belval_corpus, title, year)), ., by = "title") %>% 
+  arrange(topic, year) %>% 
+  View()
