@@ -39,7 +39,7 @@ With the wordcloud we explored the word frequency of the whole corpus. To analys
 ![TF/IDF](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/tf_idf.svg)
 
 ### Structural Topic Model
-Next a Structural Topic Model (STM) has been applied on the data set with K = 6. These 6 topics have been labeled manually.
+Next a [Structural Topic Model (STM)](https://www.structuraltopicmodel.com/) has been applied on the data set with K = 6. These 6 topics have been labeled manually.
 ![STM](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/stm.svg)
 
 
