@@ -18,7 +18,7 @@ library(dplyr)
 library(SemNetCleaner)
 library(lubridate)
 
-# Function to read file and unnest lines to words
+# Function to read file and un-nest lines to words
 processFile = function(filepath) {
   # Parameters
   current_title <- ""
@@ -94,7 +94,7 @@ tidy_belval_corpus <- belval_corpus %>%
   mutate(title = factor(title, levels = unique(title))) %>%
   mutate(year = lubridate::year(date))
 
-# Since 2014 had very few articels, these were combined with 2015
+# Since 2014 had very few articles, these were combined with 2015
 tidy_belval_corpus[tidy_belval_corpus$year == 2014,5] <- 2015
 
 
@@ -105,7 +105,7 @@ library(SnowballC)
 library(wordcloud)
 library(RColorBrewer)
 
-# Count of each word accros the total corpus
+# Count of each word across the total corpus
 belval_corpus_count <- tidy_belval_corpus %>% 
   count(word, sort = TRUE)
 
@@ -159,7 +159,7 @@ tidy_belval_corpus %>%
   theme(axis.title.y = element_blank())
 
 
-#### Topic Modelin ####
+#### Topic Modeling ####
 library(stm)
 library(quanteda)
 
