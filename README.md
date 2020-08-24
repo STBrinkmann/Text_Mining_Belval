@@ -44,6 +44,7 @@ Next a [Structural Topic Model (STM)](https://www.structuraltopicmodel.com/) has
 
 To evaluate the importance and the change over time of these topics, the topic of each article within the corpus has been predicted. The result is shown in the final figure:
 ![TimeSeries]( https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/timeseries.svg)
+
 The most frequent articles are those that deal with the university campus in Belval itself. The second most frequent type of article is the one dealing with structural change, i.e. the transformation from a former steel industry location to the Cité des Sciences, the city of science. It should be emphasized that articles on this topic predominantly highlight the positive implementation of structural change. This is followed by articles on the topic of culture, although it is clearly visible here that there has been increased reporting on this area since 2019. This is due to the fact that this year Belval was admitted to the Capital of Culture 2022.
 This analysis was complemented by a qualitative interview with a partner from the University of Luxembourg about the Belval project.
 
