@@ -35,11 +35,11 @@ At this point the corpus does not contain many articles for 2014 and 2015.
 Therefore these articles have been combined for the further analysis. The next figure shows the number of articles per year:
 ![Article count](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/Articles_Count.svg)
 
-With the wordcloud we explored the word frequency of the whole corpus. To analyse the keywords of each year, a [term frequency-inverse document frequency](http://www.tfidf.com/) has been conducted: 
+With the wordcloud we explored the absolute word frequency of the whole corpus. To analyse the keywords that describe the major events of each year, a [term frequency-inverse document frequency](http://www.tfidf.com/) has been conducted: 
 ![TF/IDF](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/tf_idf.svg)
 
 ### Structural Topic Model
-Next a [Structural Topic Model (STM)](https://www.structuraltopicmodel.com/) has been applied on the data set with K = 6. These 6 topics have been labeled manually.
+Next a [Structural Topic Model (STM)](https://www.structuraltopicmodel.com/) has been applied on the data set. From the previous steps we already have gained an understanding of the complexity of the coverage of reports about Belval. Therefore, we knew that there are not that many different topics. After an iterative process of setting the parameter K (number of topics) and interpreting the results, I set K = 6. These 6 topics have been labeled manually.
 ![STM](https://github.com/Weemaan/Text_Mining_Belval/blob/master/Plots/stm.svg)
 
 
