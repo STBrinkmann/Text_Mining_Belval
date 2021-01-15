@@ -46,7 +46,7 @@ processFile = function(filepath) {
       current_title <- this_line %>% 
         gsub("Title: ", "", .)
       
-      # Set curent_title as text for this_line
+      # Set current_title as text for this_line
       this_line <- current_title
       
       # Get date from next line
@@ -59,10 +59,10 @@ processFile = function(filepath) {
     } else { 
       # 4. Fill output-tibble
       output[line_count, ] <- tibble(current_title, line_count, this_line, current_date)
-      
-      # 5. Increment line_count
-      line_count <- line_count + 1 
     }
+    
+    # 5. Increment line_count
+    line_count <- line_count + 1
   }
   # Close connection
   close(con)
@@ -73,17 +73,15 @@ processFile = function(filepath) {
     return()
 }
 
-# Process file from path and remove stop words ()
+# Process file from path and remove stop words 
+# (The warning always appears. I don't know what it indicates, but I haven't run into any issues neither)
 belval_corpus <- processFile(file.path("Data", "google_news_lines.txt")) %>% 
   filter(!(word %in% c("title", "belval", "esch", "escher", "luxembourg", "alzette", "â", "de"))) %>% 
-  anti_join(stop_words)
+  anti_join(stop_words) %>% 
+  # Singularize words (eg. students -> student)
+  rowwise() %>% 
+  mutate(word = singularize(word))
 
-# Singularize words (eg. students -> student)
-pr = txtProgressBar(min = 0, max = nrow(belval_corpus), initial = 0, style = 3)
-for (this_word in 1:nrow(belval_corpus)) {
-  belval_corpus[this_word, 4] <- singularize(belval_corpus[this_word, 4])
-  setTxtProgressBar(pr, this_word)
-}
 # I manually singularized this word after exploring the data
 belval_corpus[belval_corpus$word=="furnaces",4] <- "furnace"
 
@@ -115,7 +113,7 @@ wordcloud(words = belval_corpus_count$word, freq = belval_corpus_count$n, min.fr
           colors=brewer.pal(6, "Dark2"))
 
 
-#### Explore process over time ###
+#### Explore process over time ####
 # Load packages
 library(ggplot2)
 library(ggthemes)
